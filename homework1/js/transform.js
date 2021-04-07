@@ -44,11 +44,25 @@ var MVPmat = function ( dispParams ) {
 	// INPUT
 	// state: state of StateController
 	function computeModelTransform( state ) {
-
+	
 		/* TODO (2.1.1.3) Matrix Update / (2.1.2) Model Rotation  */
+		//Angles 
+		var thetaX = (Math.PI/180)*state.modelRotation.x;
+		var thetaY = (Math.PI/180)*state.modelRotation.y;
 
-		return new THREE.Matrix4();
+		var m = new THREE.Matrix4();
 
+		var mX = new THREE.Matrix4();
+		var mY = new THREE.Matrix4();
+		var mT = new THREE.Matrix4();
+
+		mX.makeRotationX( thetaX );
+		mY.makeRotationY( thetaY );
+		mT.makeTranslation( state.modelTranslation.x, state.modelTranslation.y, state.modelTranslation.z);
+		m.multiplyMatrices(mX,mY);
+		m.multiplyMatrices(m, mT);
+
+		return m;
 	}
 
 	// A function to compute a view matrix based on the current state

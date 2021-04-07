@@ -83,7 +83,7 @@ var StateController = function ( dispParams ) {
 	//
 	// INPUT
 	// x: the x position of the mouse cursor
-	// y: the x position of the mouse cursor
+	// y: the y position of the mouse cursor
 	function onClick( x, y ) {
 
 		previousPosition.set( x, y );
@@ -159,9 +159,20 @@ var StateController = function ( dispParams ) {
 	// the mouse movement between frames in Three's coordinate as THREE.Vector2
 	function computeMovement( x, y, previousPosition ) {
 
-		/* TODO (2.1.1.1) Mouse Movement */
 
-		return new THREE.Vector2();
+		/* TODO (2.1.1.1) Mouse Movement */
+		// Create local vecotr to define current x,y coordinates
+		var currentPosition = new THREE.Vector2(x,y);
+
+		// Add vectors together to get new position
+		var distanceMoved = new THREE.Vector2(x - previousPosition.x, y - previousPosition.y);
+		
+		// Update previousPosition
+		previousPosition.set(x,y);
+		
+		//console.log(distanceMoved);
+		return distanceMoved;
+		//original: return new THREE.Vector2();
 
 	}
 
@@ -194,16 +205,20 @@ var StateController = function ( dispParams ) {
 		if ( e.shiftKey && ! ctrlKey ) {
 
 			// XY translation
-
-		} else if ( ! e.shiftKey && ctrlKey ) {
+			_this.state.modelTranslation.x += movement.x;
+			_this.state.modelTranslation.y += -movement.y;
+		} 
+		else if ( ! e.shiftKey && ctrlKey ) {
 
 			// Z translation
+			_this.state.modelTranslation.z += movement.y;
 
-
-		} else {
+		} 
+		else {
 
 			// Rotation
-
+			_this.state.modelRotation.x += -movement.y;
+			_this.state.modelRotation.y += movement.x;
 		}
 
 	}
@@ -255,11 +270,12 @@ var StateController = function ( dispParams ) {
 		if ( ! ctrlKey ) {
 
 			// XY translation
+			
 
-		} else {
+		} 
+		else {
 
 			// Z translation
-
 		}
 
 	}

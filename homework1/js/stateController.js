@@ -206,19 +206,19 @@ var StateController = function ( dispParams ) {
 
 			// XY translation
 			_this.state.modelTranslation.x += movement.x;
-			_this.state.modelTranslation.y += -movement.y;
+			_this.state.modelTranslation.y -= movement.y;
 		} 
 		else if ( ! e.shiftKey && ctrlKey ) {
 
 			// Z translation
-			_this.state.modelTranslation.z += movement.y;
+			_this.state.modelTranslation.z -= movement.y;
 
 		} 
 		else {
 
 			// Rotation
-			_this.state.modelRotation.x += -movement.y;
-			_this.state.modelRotation.y += movement.x;
+			_this.state.modelRotation.x += movement.y;
+			_this.state.modelRotation.y += movement.x; 
 		}
 
 	}
@@ -242,11 +242,13 @@ var StateController = function ( dispParams ) {
 		if ( ! ctrlKey ) {
 
 			// XY translation
-
-		} else {
+			_this.state.viewerPosition.x += movement.x;
+			_this.state.viewerPosition.y += -movement.y;
+		} 
+		else {
 
 			// Z translation
-
+			_this.state.viewerPosition.z -= movement.y;
 		}
 
 	}
@@ -267,17 +269,18 @@ var StateController = function ( dispParams ) {
 				&& e.ctrlKey );
 
 		// Check if shift-key pressed
-		if ( ! ctrlKey ) {
-
-			// XY translation
-			
-
-		} 
-		else {
+		if ( e.shiftKey && ! ctrlKey ) {
 
 			// Z translation
+			_this.state.viewerTarget.z -= movement.y;
+		} 
+		else {
+		
+		// XY translation
+			_this.state.viewerTarget.x += movement.x;
+			_this.state.viewerTarget.y -= movement.y;
+	
 		}
-
 	}
 
 
@@ -291,6 +294,11 @@ var StateController = function ( dispParams ) {
 
 		/* TODO (2.3.1) Implement Perspective Transform */
 
+		//limit to 1 or more
+		if ( _this.state.clipNear - movement.y >= 1)
+		{
+			_this.state.clipNear -= movement.y;
+		}
 	}
 
 

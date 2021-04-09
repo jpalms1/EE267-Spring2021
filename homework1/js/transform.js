@@ -59,7 +59,7 @@ var MVPmat = function ( dispParams ) {
 		mX.makeRotationX( thetaX );
 		mY.makeRotationY( thetaY );
 		mT.makeTranslation( state.modelTranslation.x, state.modelTranslation.y, state.modelTranslation.z);
-		m.multiplyMatrices(mX,mY);
+		m.multiplyMatrices(mX, mY);
 		m.multiplyMatrices(m, mT);
 
 		return m;
@@ -75,13 +75,66 @@ var MVPmat = function ( dispParams ) {
 	function computeViewTransform( state ) {
 
 		/* TODO (2.2.3) Implement View Transform */
+		var eyeX = state.viewerPosition.x;
+		var eyeY = state.viewerPosition.y;
+		var eyeZ = state.viewerPosition.z;
+		var eye = new THREE.Vector3();
+		
+		eye.set(eyeX, eyeY, eyeZ);
 
+		var centerX = state.viewerTarget.x;
+		var centerY = state.viewerTarget.y;
+		var centerZ = state.viewerTarget.z;
+		var center = new THREE.Vector3();
+		center.set(centerX, centerY, centerZ);
+	
+		//console.log("eye ",eye);
+		//console.log("center ", center);
+
+		var zNum = new THREE.Vector3();
+		zNum.subVectors(eye, center);
+
+		var zDen = Math.sqrt(Math.pow((eyeX-centerX),2) + Math.pow((eyeY-centerY),2) + Math.pow((eyeZ-centerZ),2) );
+
+		console.log("zNum " , zNum);
+		console.log("zDen " , zDen);
+		
+		zNum.divideScalar(zDen);
+		var zc = zNum;
+		console.log("zc ",zc);
+
+		var up = new THREE.Vector3(0, 1, 0);
+
+		var upzc = new THREE.Vector3();
+		upzc.crossVectors(up,zc);
+		
+		var upzcNorm =  Math.sqrt(Math.pow((upzc.x),2) + Math.pow((upzc.y),2) + Math.pow((upzc.z),2) );
+		
+		upzc.divideScalar(upzcNorm);
+		var xc = upzc;
+		
+		console.log("upzc ", upzc);
+		console.log("xc ", xc);
+		console.log("upzcNorm ", upzcNorm);
+
+		var yc = new THREE.Vector3();;
+		yc.crossVectors(zc,xc);
+
+		var m = new THREE.Matrix4().set(
+			xc.x, xc.y, xc.z, -(xc.x*eye.x + xc.y*eye.y + xc.z*eye.z),
+			yc.x, yc.y, yc.z, -(yc.x*eye.x + yc.y*eye.y + yc.z*eye.z),
+			zc.x, zc.y, zc.z, -(zc.x*eye.x + zc.y*eye.y + zc.z*eye.z),
+			0, 0, 0, 1 );
+		console.log(m);
+
+		return m;
+		/* Original	
 		return new THREE.Matrix4().set(
 			1, 0, 0, 0,
 			0, 1, 0, 0,
 			0, 0, 1, - 800,
 			0, 0, 0, 1 );
-
+		*/
 	}
 
 	// A function to compute a perspective projection matrix based on the
@@ -92,17 +145,22 @@ var MVPmat = function ( dispParams ) {
 	//
 	// INPUT
 	// Notations for the input is the same as in the class.
-	function computePerspectiveTransform(
-		left, right, top, bottom, clipNear, clipFar ) {
+	function computePerspectiveTransform( left, right, top, bottom, clipNear, clipFar ) {
 
 		/* TODO (2.3.1) Implement Perspective Projection */
+		return new THREE.Matrix4().set(
+			2*clipNear/(right - left), 0, (right + left)/(right - left),  0,
+			0, 2*clipNear/(top - bottom), (top + bottom)/(top - bottom), 0,
+			0, 0, -(clipFar + clipNear)/(clipFar - clipNear), -2*(clipFar*clipNear)/(clipFar - clipNear),
+			0, 0, - 1.0, 0 );
 
+		/* Original
 		return new THREE.Matrix4().set(
 			6.7, 0, 0, 0,
 			0, 6.5, 0, 0,
 			0, 0, - 1.0, - 2.0,
 			0, 0, - 1.0, 0 );
-
+		*/
 	}
 
 	// A function to compute a orthographic projection matrix based on the
@@ -113,13 +171,16 @@ var MVPmat = function ( dispParams ) {
 	//
 	// INPUT
 	// Notations for the input is the same as in the class.
-	function computeOrthographicTransform(
-		left, right, top, bottom, clipNear, clipFar ) {
+	function computeOrthographicTransform( left, right, top, bottom, clipNear, clipFar ) {
 
 		/* TODO (2.3.2) Implement Orthographic Projection */
+		return new THREE.Matrix4().set(
+			2/(right - left), 0,  0, -(right + left)/(right - left), 
+			0, 2/(top - bottom), 0, -(top + bottom)/(top - bottom),
+			0, 0, -2/(clipFar - clipNear), -(clipFar + clipNear)/(clipFar - clipNear),
+			0, 0, 0, 1 );
 
-		return new THREE.Matrix4();
-
+		//return new THREE.Matrix4();
 	}
 
 	// Update the model/view/projection matrices

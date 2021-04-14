@@ -56,18 +56,46 @@ attribute vec3 normal;
 
 
 void main() {
-
+	
 	// Compute ambient reflection
 	vec3 ambientReflection = material.ambient * ambientLightColor;
 
-	vColor = ambientReflection;
+	// Add ambient component only
+	//vColor = ambientReflection;
 
-	gl_Position =
-		projectionMat * modelViewMat * vec4( position, 1.0 );
+	// transform position into clip space
+	gl_Position = projectionMat * modelViewMat * vec4( position, 1.0 );
 
+	// transform position into view space
+	vec4 vertexPositionView = modelViewMat * vec4(position , 1.0);
+	vec3 vertexPositionView3 = vec3(vertexPositionView);
+
+	// transform normal into view space and normalize it
+	vec3 normalView = normalize( normalMat * normal );
+
+	// transform light position into view space 
+	vec4 lightPositionView = viewMat * vec4( pointLights[0].position , 1.0);
+	vec3 lightPositionView3 = vec3(lightPositionView);
+
+	// Compute diffuse term
+	float diffuseFactor = dot(normalView, -normalize( lightPositionView3 ));
+
+	// Add diffuse components to vColor -- ambient + diffuse
+	//vColor += diffuseFactor * material.diffuse * pointLights[0].color;
+
+	// Calculate distance between light source and vertex
+	float d = length( vertexPositionView3 - lightPositionView3 );
+
+	float kc = attenuation[0];
+	float kl = attenuation[1];
+	float kq = attenuation[2];
+
+	float attenuationCoeff = 1.0/(kc + kl*d + kq*d*d);
+	
+	// Add attenutation component to vColor -- ambient + attentuation*diffuse
+	vColor =  ambientReflection + attenuationCoeff*(diffuseFactor * material.diffuse * pointLights[0].color);
 }
 ` );
-
 
 var shaderNode = document.createElement( "script" );
 

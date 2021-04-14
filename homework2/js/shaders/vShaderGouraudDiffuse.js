@@ -78,7 +78,7 @@ void main() {
 	vec3 lightPositionView3 = vec3(lightPositionView);
 
 	// Compute diffuse term
-	float diffuseFactor = dot(normalView, -normalize( lightPositionView3 ));
+	float diffuseFactor = max( dot(normalView, -normalize( lightPositionView3 )) , 0.0);
 
 	// Add diffuse components to vColor -- ambient + diffuse
 	//vColor += diffuseFactor * material.diffuse * pointLights[0].color;

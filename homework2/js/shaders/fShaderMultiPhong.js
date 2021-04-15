@@ -111,14 +111,31 @@ void main() {
 
 		float specularFactor = pow( max( dot(R, V), 0.0), material.shininess);
 		
-		vec3 directionCoeff;
+		vec3 directionComponent;
 		for (int j = 0; j < NUM_DIR_LIGHTS; j++)
 		{
-			directionCoeff +=  max( dot( normalView, normalize( directionalLights[j].direction )) , 0.0)  * directionalLights[j].color ;
+
+			// Compute directional diffuse term
+			float directionDiffuseFactor = max( dot( normalView, -normalize( directionalLights[j].direction )) , 0.0);
+			vec3 directionDiffuse = directionDiffuseFactor * material.diffuse * directionalLights[j].color;
+
+			// Directional Specular parameters
+			vec3 L = -normalize(  directionalLights[j].direction );
+			vec3 N = normalView;
+			vec3 R = 2.0*dot(N, L)*N - L;
+			vec3 V = -normalize( positionView3 );
+
+			float directionSpecularFactor = pow( max( dot(R, V), 0.0), material.shininess);
+
+			vec3 directionSpecular = directionSpecularFactor * material.specular * directionalLights[j].color;;
+			
+			directionComponent +=  directionSpecular + directionDiffuse;
+
+			//max( dot( normalView, normalize( directionalLights[j].direction )) , 0.0)  * directionalLights[j].color ;
 		}
 
 		// Add point light sources to vColor -- sigma( attentuation*(specular +diffuse) )
-		fColorSum +=  directionCoeff + attenuationCoeff*((specularFactor * material.specular * pointLights[i].color) + (diffuseFactor * material.diffuse * pointLights[i].color));
+		fColorSum +=  directionComponent + attenuationCoeff*((specularFactor * material.specular * pointLights[i].color) + (diffuseFactor * material.diffuse * pointLights[i].color));
 	}
 	// Total fColor -- ambient + sigma( attentuation*(specular + diffuse) )
 	gl_FragColor.rgb =  ambientReflection + fColorSum;

@@ -53,7 +53,7 @@ uniform vec3 ambientLightColor;
 
 
 void main() {
-	// Aggregate sspecular and diffuse components
+	// Aggregate specular and diffuse components
 	vec3 fColorSum;
 
 	// Compute ambient reflection

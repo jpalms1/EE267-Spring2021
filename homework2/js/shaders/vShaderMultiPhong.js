@@ -29,6 +29,19 @@ void main() {
 
 	gl_Position = projectionMat * modelViewMat * vec4( position, 1.0 );
 
+	// transform position into view space
+	vec4 vertexPositionView = modelViewMat * vec4( position , 1.0);
+	vec3 vertexPositionView3 = vec3(vertexPositionView);
+
+	// transform normal into view space and normalize it
+	vec3 normalView = normalize( normalMat * normal );
+	
+	// Set output texture coordinate to vertex position in world space
+	normalCam = normalView;
+
+	// Set output color to vertex normal direction
+	fragPosCam = vertexPositionView3;
+
 }
 ` );
 

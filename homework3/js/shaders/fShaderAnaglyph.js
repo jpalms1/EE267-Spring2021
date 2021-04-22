@@ -31,6 +31,17 @@ void main() {
 
 	gl_FragColor = texture2D( textureMapL,  textureCoords );
 
+	// Convert images to grayscale
+	float leftImageGray = 0.2989 * texture2D( textureMapL,  textureCoords ).r
+						+ 0.5870 * texture2D( textureMapL,  textureCoords ).g
+						+ 0.1140 * texture2D( textureMapL,  textureCoords ).b; 
+	float rightImageGray = 0.2989 * texture2D( textureMapR,  textureCoords ).r
+						+ 0.5870 * texture2D( textureMapR,  textureCoords ).g
+						+ 0.1140 * texture2D( textureMapR,  textureCoords ).b;
+
+	gl_FragColor = vec4( leftImageGray, rightImageGray, rightImageGray, 1.0 );
+
+
 }
 ` );
 

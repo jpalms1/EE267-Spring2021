@@ -68,15 +68,15 @@ var MVPmat = function ( dispParams ) {
 
 		/* TODO (2.4.1) View Matrix Computation - Update this function! */
 
-		var viewerPosition = state.viewerPosition;
+		var viewerPosition = new THREE.Vector3( halfIpdShift/8, 0, dispParams.distanceScreenViewer);
 
-		var viewerTarget = state.viewerTarget;
+		var viewerTarget = new THREE.Vector3( halfIpdShift/8, 0, 0);
 
 		var viewerUp = new THREE.Vector3( 0, 1, 0 );
 
 		var translationMat
 	   = new THREE.Matrix4().makeTranslation(
-			 - viewerPosition.x /* + halfIpdShift*/,
+			 - viewerPosition.x,
 			 - viewerPosition.y,
 			 - viewerPosition.z );
 
@@ -96,10 +96,26 @@ var MVPmat = function ( dispParams ) {
 	// Notations for the input is the same as in the class.
 	function computePerspectiveTransform(
 		left, right, top, bottom, clipNear, clipFar ) {
+		var l = left;
+		var r = right;
+		var t = top;
+		var b = bottom;
+		var n = clipNear;
+		var f = clipFar;
 
+		var mProj = new THREE.Matrix4();
+
+		mProj.set( 2*n/(r-l) , 0,		  (r+l)/(r-l),  0,
+				   0,          2*n/(t-b), (t+b)/(t-b),  0, 				
+				   0,		   0,		  -(f+n)/(f-n), -2*f*n/(f-n),
+				   0,		   0,		  -1,			0 );
+
+		return mProj;
+
+		/*ORIGINAL
 		return new THREE.Matrix4().
 			makePerspective( left, right, top, bottom, clipNear, clipFar );
-
+		*/
 	}
 
 	// Update the model/view/projection matrices based on the current state
@@ -140,11 +156,9 @@ var MVPmat = function ( dispParams ) {
 		} else if ( renderingMode === ANAGLYPH_MODE ) {
 
 			// Compute view matrix
-			this.anaglyphViewMat.L =
-				computeViewTransform( state, dispParams.ipd / 2 );
+			this.anaglyphViewMat.L = computeViewTransform( state, dispParams.ipd / 2 );
 
-			this.anaglyphViewMat.R =
-				computeViewTransform( state, - dispParams.ipd / 2 );
+			this.anaglyphViewMat.R = computeViewTransform( state, - dispParams.ipd / 2 );
 
 
 			/* TODO (2.4.2) Projection Matrix Computation */

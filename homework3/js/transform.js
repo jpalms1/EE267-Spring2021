@@ -76,7 +76,7 @@ var MVPmat = function ( dispParams ) {
 
 		var translationMat
 	   = new THREE.Matrix4().makeTranslation(
-			 - viewerPosition.x,
+			 - viewerPosition.x /* + halfIpdShift*/,
 			 - viewerPosition.y,
 			 - viewerPosition.z );
 

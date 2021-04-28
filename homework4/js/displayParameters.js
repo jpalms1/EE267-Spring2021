@@ -75,6 +75,7 @@ var DisplayParameters = function () {
 		var dls = _this.distLensScreen;
 	
 		M = f/(f - dls);
+
 		return M;
 
 	}
@@ -90,7 +91,6 @@ var DisplayParameters = function () {
 	function computeDistanceScreenViewer() {
 
 		/* TODO (2.1.1) Calculating Parameters of the Magnified Virtual Screen Image */
-
 		var d;
 		var f = focalLength;
 		var dls = _this.distLensScreen;
@@ -99,7 +99,6 @@ var DisplayParameters = function () {
 		d = dv + dEye;
 
 		return d;
-
 	}
 
 

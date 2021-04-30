@@ -41,6 +41,35 @@ void main() {
 
 	gl_FragColor = texture2D( map, textureCoords );
 
+	float K1 = K[0];
+	float K2 = K[1];
+
+	float xu = textureCoords.x * viewportSize.x;
+	float yu = textureCoords.y * viewportSize.y;
+
+	float xc = centerCoordinate.x * viewportSize.x;
+	float yc = centerCoordinate.y * viewportSize.y;
+
+	float r = sqrt( pow( (xu-xc), 2.0) + pow( (yu-yc), 2.0) )/distLensScreen;
+
+	float xd = ( (xu - xc )*( 1.0 + K1*pow( r, 2.0) + K2*pow( r, 4.0) ))/viewportSize.x;
+	float yd = ( (yu - yc )*( 1.0 + K1*pow( r, 2.0) + K2*pow( r, 4.0) ))/viewportSize.y;
+
+	xc = xc/ viewportSize.x;
+	yc = yc/ viewportSize.y;
+
+	if ( (xd + xc ) <= 0.0 || (xd + xc ) > 1.0 || (yd + yc ) <= 0.0 || (yd + yc ) > 1.0) 
+	{
+		// make black
+		gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+	} 
+	else 
+	{
+		//distort appropriately
+		gl_FragColor = texture2D(map, vec2( xd + xc , yd + yc ));
+	}
+
+
 }
 ` );
 

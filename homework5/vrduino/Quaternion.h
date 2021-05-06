@@ -58,7 +58,7 @@ public:
   /* function to compute the length of a quaternion */
   double length() {
 
-    return sqrt( pow( q[0], 2.0) + pow(q[1], 2.0) + pow(q[2], 2.0) + pow(q[3], 2.0) );
+    return sqrt( pow(this->q[0], 2.0) + pow(this->q[1], 2.0) + pow(this->q[2], 2.0) + pow(this->q[3], 2.0) );
 
   }
 

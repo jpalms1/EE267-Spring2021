@@ -30,8 +30,8 @@ double alphaImuFilter = 0.9;
 bool simulateImu = false;
 
 //if test is true, then run tests in TestOrientation.cpp and exit
-//bool test = false;
-bool test = true;
+bool test = false;
+//bool test = true;
 
 //if measureImuBias is true, measure imu bias and variance
 bool measureImuBias = true;
@@ -69,7 +69,8 @@ const int QC     = 5;
 
 //chose which values you want to stream
 //int streamMode = INFO;
-int streamMode = FLAT;
+//int streamMode = FLAT;
+int streamMode = THREED;
 
 //variables to measure read frequency
 int nReads = 0;

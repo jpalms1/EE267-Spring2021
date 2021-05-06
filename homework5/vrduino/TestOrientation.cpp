@@ -80,7 +80,7 @@ bool test6() {
   Quaternion q5 = q3.rotate(q4);
   Quaternion qExp = Quaternion(
     0.512505, -0.145908, 0.750596, -0.390712);
-  Serial.println("Expected multiplied quaternion:");
+  Serial.println("Expected rotated quaternion:");
   qExp.serialPrint();
   Serial.println("Your result: ");
   q5.serialPrint();

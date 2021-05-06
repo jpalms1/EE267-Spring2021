@@ -48,7 +48,9 @@ public:
   Quaternion& setFromAngleAxis(double angle, double vx, double vy, double vz) {
 
     //this->q[0] = ...
-
+    //convert angle to radians
+      angle *= ( PI / 180.0 );
+      *this = Quaternion(cos(angle/2.0), vx * sin(angle/2.0), vy * sin(angle/2.0), vz * sin(angle/2.0));
     return *this;
 
   }
@@ -56,7 +58,7 @@ public:
   /* function to compute the length of a quaternion */
   double length() {
 
-    return 0.0;
+    return sqrt( pow( q[0], 2.0) + pow(q[1], 2.0) + pow(q[2], 2.0) + pow(q[3], 2.0) );
 
   }
 
@@ -64,6 +66,8 @@ public:
   Quaternion& normalize() {
 
     //this->q[0] = ...
+      double L = length();
+      *this = Quaternion(this->q[0] / L, this->q[1] / L, this->q[2] / L, this->q[3] / L);
 
     return *this;
   }
@@ -73,6 +77,8 @@ public:
 
     //this->q[0] = ...
 
+      double L = length();
+      *this = Quaternion(this->q[0] / sq(L), -this->q[1] / sq(L), -this->q[2] / sq(L), -this->q[3] / sq(L));
     return *this;
   }
 
@@ -83,14 +89,21 @@ public:
 
     //q.q[0] = ...
 
-
-    return q;
+    return Quaternion(a.q[0] * b.q[0] - a.q[1] * b.q[1] - a.q[2] * b.q[2] - a.q[3] * b.q[3],
+                      a.q[0] * b.q[1] + a.q[1] * b.q[0] + a.q[2] * b.q[3] - a.q[3] * b.q[2],
+                      a.q[0] * b.q[2] - a.q[1] * b.q[3] + a.q[2] * b.q[0] + a.q[3] * b.q[1],
+                      a.q[0] * b.q[3] + a.q[1] * b.q[2] - a.q[2] * b.q[1] + a.q[3] * b.q[0] );
   }
 
   /* function to rotate a quaternion by r * q * r^{-1} */
   Quaternion rotate(Quaternion r) {
+      
+      // Create copies of quaternions to manipulate without 
+      // altering original values
+      Quaternion r1 = r.clone();
+      Quaternion q = clone();
 
-    return Quaternion();
+      return multiply(multiply(r, q), r1.inverse());
 
   }
 

@@ -67,8 +67,8 @@ void updateQuaternionGyr(Quaternion& q, double gyr[3], double deltaT) {
 
 	Quaternion q1 = q.clone();
 	
-	//angle in radians to degree
-	double angle = deltaT * normGyrAxis * (180/PI);
+	//angle in radians to degree??????
+	double angle = deltaT * normGyrAxis;// * (180/PI);
 	Serial.println("ANGLE: " + (String)angle);
 	//qDelta
 	Quaternion qDelta = q1.setFromAngleAxis(angle, gyr[0] / normGyrAxis, gyr[1] / normGyrAxis, gyr[2] / normGyrAxis );

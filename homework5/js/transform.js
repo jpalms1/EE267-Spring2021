@@ -87,6 +87,15 @@ var MVPmat = function ( dispParams ) {
 			.premultiply( translationMat )
 			.premultiply( ipdTranslateMat );
 
+		// Create Rotation matrix from quaternion elements	
+		var quaternionMatrix = new THREE.Matrix4().makeRotationFromQuaternion(state.imuQuaternion);
+
+		//Get the inverse to do transformations in the correct order
+		quaternionMatrix.getInverse(quaternionMatrix, true);
+
+		//Multiply with viewMat
+		viewMat.premultiply(quaternionMatrix);
+		
 		return viewMat;
 
 	}
@@ -117,8 +126,24 @@ var MVPmat = function ( dispParams ) {
 			new THREE.Matrix4().makeTranslation( halfIpdShift, 0, 0 );
 
 		var viewMat = new THREE.Matrix4()
-			.premultiply( translationMat )
-			.premultiply( ipdTranslateMat );
+			.premultiply( translationMat );
+
+		// Create Rotation matrix from quaternion elements	
+		var quaternionMatrix = new THREE.Matrix4().makeRotationFromQuaternion(state.imuQuaternion);
+
+		var headNeckTransMatrix = new THREE.Matrix4().makeTranslation(0, neckLength, headLength);
+		
+		//Pre-multiply T(0, ln,lh)
+		viewMat.premultiply(headNeckTransMatrix);
+
+		//Get the inverse to do transformations in the correct order
+		quaternionMatrix.getInverse(quaternionMatrix, true);
+
+		//Multiply with viewMat
+		viewMat.premultiply(quaternionMatrix);
+		viewMat.premultiply(-headNeckTransMatrix);
+		viewMat.premultiply( ipdTranslateMat );
+
 
 		return viewMat;
 
